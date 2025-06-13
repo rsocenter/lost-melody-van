@@ -5,17 +5,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lost Melody Van 🎵</title>
-  <meta name="theme-color" content="#000000" />
   <style>
-    body { background-color: #000; color: #fff; font-family: sans-serif; text-align: center; margin: 0; padding: 0; }
-    img.poster { max-width: 100%; max-height: 40vh; margin-top: 10px; object-fit: contain; }
-    .controls, .song-buttons {
-      margin: 10px auto;
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
+    body { background-color: #000; color: #fff; font-family: sans-serif; margin: 0; padding: 0; text-align: center; }
+    img.poster { max-width: 100%; max-height: 40vh; object-fit: contain; margin: 10px auto; display: block; }
+    .controls, .song-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 10px; }
     .controls button, .email-btn {
       padding: 8px 16px;
       border-radius: 8px;
@@ -25,16 +18,14 @@
       cursor: pointer;
     }
     .controls button.active { background-color: #f0c; color: black; }
-    .song-buttons button {
-      padding: 6px 12px;
-      border-radius: 6px;
-      border: none;
-      background-color: #444;
-      color: white;
-    }
-    .song-buttons button.active { background-color: #f0c; color: black; }
+    .song-entry { display: flex; align-items: center; justify-content: space-between; width: 90%; margin: 5px auto; border-bottom: 1px solid #444; padding: 5px; }
+    .song-title { flex-grow: 1; text-align: left; }
+    .menu-btn { background: none; border: none; color: white; cursor: pointer; font-size: 18px; padding: 0 10px; }
+    .dropdown { display: none; position: absolute; background: #222; border: 1px solid #444; padding: 5px; border-radius: 4px; z-index: 1000; }
+    .dropdown a { display: block; color: white; text-decoration: none; margin: 4px 0; }
+    .dropdown a:hover { text-decoration: underline; }
     #current-song { font-weight: bold; margin: 10px 0; }
-    audio { margin: 10px auto; width: 80%; display: block; }
+    audio { width: 90%; margin: 10px auto; display: block; }
   </style>
 </head>
 <body>
@@ -48,64 +39,80 @@
     <button id="installApp">📲 Telepítés</button>
   </div>
 
-  <div class="song-buttons" id="song-list">
-    <button onclick="playSong(0)">1. Soy libre</button>
-    <button onclick="playSong(1)">2. Soy libre pepperappabumm</button>
-    <button onclick="playSong(2)">3. Nem veszem be</button>
-    <button onclick="playSong(3)">4. Csak nosztalgia</button>
-    <button onclick="playSong(4)">5. Nosztalgia</button>
-    <button onclick="playSong(5)">6. Baila baby</button>
-    <button onclick="playSong(6)">7. Őrült nyár</button>
-    <button onclick="playSong(7)">8. Ááhe</button>
-    <button onclick="playSong(8)">9. Fortuna kisasszony</button>
-    <button onclick="playSong(9)">10. Szerencse kisasszony</button>
-    <button onclick="playSong(10)">11. Csókolózni egyedül</button>
+  <div id="song-list">
   </div>
 
   <div id="current-song">🎵 Jelenleg nincs lejátszott dal</div>
-
   <audio id="player" controls></audio>
+
+  <div id="dropdown" class="dropdown"></div>
 
   <script>
     const songs = [
-      "Soy Libre. (1).mp3",
-      "Soy libre pepperappabumm. (1).mp3",
-      "Nem veszem be! (1).mp3",
-      "Csak nosztalgia. (1).mp3",
-      "Nosztalgia. (1).mp3",
-      "Baila Baby! (1).mp3",
-      "Őrült nyár! (1).mp3",
-      "Ááhe! (1).mp3",
-      "Fortuna kisasszony. (1).mp3",
-      "Szerencse kisasszony. (1).mp3",
-      "Csókolózni egyedül. (1).mp3"
+      { title: "Soy libre", file: "Soy Libre. (1).mp3" },
+      { title: "Soy libre pepperappabumm", file: "Soy libre pepperappabumm. (1).mp3" },
+      { title: "Nem veszem be", file: "Nem veszem be! (1).mp3" },
+      { title: "Csak nosztalgia", file: "Csak nosztalgia. (1).mp3" },
+      { title: "Nosztalgia", file: "Nosztalgia. (1).mp3" },
+      { title: "Baila baby", file: "Baila Baby! (1).mp3" },
+      { title: "Őrült nyár", file: "Őrült nyár! (1).mp3" },
+      { title: "Ááhe", file: "Ááhe! (1).mp3" },
+      { title: "Fortuna kisasszony", file: "Fortuna kisasszony. (1).mp3" },
+      { title: "Szerencse kisasszony", file: "Szerencse kisasszony. (1).mp3" },
+      { title: "Csókolózni egyedül", file: "Csókolózni egyedül. (1).mp3" }
     ];
 
+    const songList = document.getElementById("song-list");
     const player = document.getElementById("player");
-    const songButtons = document.querySelectorAll("#song-list button");
     const currentText = document.getElementById("current-song");
+    const dropdown = document.getElementById("dropdown");
 
     let currentIndex = 0;
     let mode = "sequential";
 
+    songs.forEach((song, i) => {
+      const entry = document.createElement("div");
+      entry.className = "song-entry";
+      const btn = document.createElement("button");
+      btn.textContent = `${i + 1}. ${song.title}`;
+      btn.onclick = () => playSong(i);
+      btn.className = "song-title";
+      const menuBtn = document.createElement("button");
+      menuBtn.innerHTML = "⋮";
+      menuBtn.className = "menu-btn";
+      menuBtn.onclick = (e) => showMenu(e, song);
+      entry.appendChild(btn);
+      entry.appendChild(menuBtn);
+      songList.appendChild(entry);
+    });
+
     function playSong(index) {
       currentIndex = index;
-      player.src = songs[index];
+      player.src = songs[index].file;
       player.play();
-      highlightPlaying(index);
-      currentText.textContent = "🎵 Most szól: " + songs[index].replace('. (1).mp3', '').replace('.mp3', '');
+      currentText.textContent = "🎵 Most szól: " + songs[index].title;
     }
 
-    function highlightPlaying(index) {
-      songButtons.forEach(btn => btn.classList.remove("active"));
-      songButtons[index].classList.add("active");
+    function showMenu(e, song) {
+      dropdown.innerHTML = `
+        <a href="${song.file}" download>⬇️ Letöltés</a>
+        <a href="https://wa.me/?text=Hallgasd+meg:+${encodeURIComponent(song.title)}" target="_blank">📤 Megosztás</a>
+      `;
+      dropdown.style.display = "block";
+      dropdown.style.left = e.pageX + "px";
+      dropdown.style.top = e.pageY + "px";
     }
+
+    window.onclick = function(e) {
+      if (!e.target.classList.contains("menu-btn")) {
+        dropdown.style.display = "none";
+      }
+    };
 
     document.getElementById("sequential").onclick = () => {
       mode = "sequential";
       setActiveMode("sequential");
     };
-
     document.getElementById("shuffle").onclick = () => {
       mode = "shuffle";
       setActiveMode("shuffle");
@@ -126,7 +133,7 @@
       }
     });
 
-    // App telepítés (PWA)
+    // App install gomb
     let deferredPrompt;
     const installBtn = document.getElementById("installApp");
     window.addEventListener("beforeinstallprompt", (e) => {
@@ -135,9 +142,7 @@
       installBtn.style.display = "inline-block";
     });
     installBtn.addEventListener("click", () => {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-      }
+      if (deferredPrompt) deferredPrompt.prompt();
     });
 
     if ('serviceWorker' in navigator) {
