@@ -1,0 +1,190 @@
+
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lost Melody Van 🎶</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon.png" />
+  <style>
+    body {{
+      font-family: sans-serif;
+      background: #f5e1f7;
+      color: #222;
+      margin: 0;
+      padding: 0;
+    }}
+    .container {{
+      max-width: 700px;
+      margin: auto;
+      padding: 1rem;
+    }}
+    .song {{
+      padding: 0.5rem;
+      border-bottom: 1px solid #ccc;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }}
+    .song.active {{
+      background: #d0b4e3;
+      font-weight: bold;
+    }}
+    .controls {{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1rem 0;
+      justify-content: center;
+    }}
+    .eq {{
+      width: 16px;
+      height: 16px;
+      background: linear-gradient(to top, #9333ea 20%, transparent 20%),
+                  linear-gradient(to top, #9333ea 50%, transparent 50%),
+                  linear-gradient(to top, #9333ea 80%, transparent 80%);
+      background-size: 4px 100%;
+      background-repeat: repeat-x;
+      animation: eqMove 1s infinite linear;
+    }}
+    @keyframes eqMove {{
+      0% {{ background-position: 0 0; }}
+      100% {{ background-position: -12px 0; }}
+    }}
+    .search {{
+      width: 100%;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+    }}
+    .dark-mode {{
+      background: #1f1f1f;
+      color: #fff;
+    }}
+    .poster {{
+      width: 100%;
+      max-height: 200px;
+      object-fit: contain;
+      object-position: top center;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+    }}
+    .counter {{
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="poster.jpg" class="poster" alt="Poster" />
+    <h1>Lost Melody Van 🎶</h1>
+
+    <input type="text" id="search" class="search" placeholder="🔍 Keresés..." oninput="filterSongs()" />
+
+    <div class="controls">
+      <button onclick="togglePlayMode(this)">Sorban</button>
+      <button onclick="togglePlayMode(this)">Véletlen</button>
+      <button onclick="toggleTheme()">🌙</button>
+      <button onclick="shareApp()">📤</button>
+      <a href="mailto:kovacsisa05@gmail.com" title="Írj nekünk!">📧</a>
+    </div>
+
+    <div id="playlist"></div>
+  </div>
+
+  <audio id="player" controls style="width: 100%; margin-top: 1rem;"></audio>
+
+  <script>
+    const songs = [{"title": "Soy Libre.", "file": "Soy Libre. (1).mp3"}, {"title": "Soy libre pepperappabum.", "file": "Soy libre pepperappabum. (1).mp3"}, {"title": "Nem veszem be!", "file": "Nem veszem be! (1).mp3"}, {"title": "Csak nosztalgia.", "file": "Csak nosztalgia. (1).mp3"}, {"title": "Nosztalgia.", "file": "Nosztalgia. (1).mp3"}, {"title": "Baila Baby!", "file": "Baila Baby! (1).mp3"}, {"title": "Őrült nyár!", "file": "Őrült nyár! (1).mp3"}, {"title": "Ááhe!", "file": "Ááhe! (1).mp3"}, {"title": "Fortuna kisasszony.", "file": "Fortuna kisasszony. (1).mp3"}, {"title": "Szerencse kisasszony.", "file": "Szerencse kisasszony. (1).mp3"}, {"title": "Csókolózni egyedül.", "file": "Csókolózni egyedül. (1).mp3"}];
+
+    let current = 0;
+    let mode = "Sorban";
+    const playlistEl = document.getElementById("playlist");
+    const player = document.getElementById("player");
+
+    function renderSongs() {{
+      playlistEl.innerHTML = "";
+      songs.forEach((song, i) => {{
+        const div = document.createElement("div");
+        div.className = "song" + (i === current ? " active" : "");
+        div.innerHTML = `
+          <span>${{song.title}}</span>
+          <span>
+            <a href="${{song.file}}" download title="Letöltés">⬇️</a>
+            <span id="counter-${{i}}" class="counter">...</span>
+            <span class="eq" style="display: ${{i === current && !player.paused ? 'inline-block' : 'none'}};"></span>
+          </span>
+        `;
+        div.onclick = () => playSong(i);
+        playlistEl.appendChild(div);
+        loadCount(i);
+      }});
+    }}
+
+    function playSong(i) {{
+      current = i;
+      player.src = songs[i].file;
+      player.play();
+      incrementCount(i);
+      renderSongs();
+    }}
+
+    function filterSongs() {{
+      const q = document.getElementById("search").value.toLowerCase();
+      const allSongs = playlistEl.querySelectorAll(".song");
+      allSongs.forEach(song => {{
+        const text = song.textContent.toLowerCase();
+        song.style.display = text.includes(q) ? "flex" : "none";
+      }});
+    }}
+
+    function togglePlayMode(btn) {{
+      mode = btn.textContent;
+      document.querySelectorAll(".controls button").forEach(b => b.style.fontWeight = "normal");
+      btn.style.fontWeight = "bold";
+    }}
+
+    player.onended = () => {{
+      if (mode === "Sorban") {{
+        current = (current + 1) % songs.length;
+      }} else {{
+        current = Math.floor(Math.random() * songs.length);
+      }}
+      playSong(current);
+    }};
+
+    function toggleTheme() {{
+      document.body.classList.toggle("dark-mode");
+    }}
+
+    function shareApp() {{
+      if (navigator.share) {{
+        navigator.share({{
+          title: "Lost Melody Van",
+          text: "Hallgasd meg a Lost Melody Van zenéit!",
+          url: window.location.href
+        }});
+      }} else {{
+        alert("Másold ki a linket: " + window.location.href);
+      }}
+    }}
+
+    function loadCount(index) {{
+      fetch(`https://api.countapi.xyz/get/lmvapp/song${{index}}`)
+        .then(res => res.json())
+        .then(data => {{
+          document.getElementById("counter-" + index).innerText = `👁 ${data.value}`;
+        }});
+    }}
+
+    function incrementCount(index) {{
+      fetch(`https://api.countapi.xyz/hit/lmvapp/song${{index}}`);
+    }}
+
+    player.onplay = renderSongs;
+    renderSongs();
+    togglePlayMode(document.querySelectorAll(".controls button")[0]);
+  </script>
+</body>
+</html>
