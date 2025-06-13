@@ -2,17 +2,27 @@
 <html lang="hu">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lost Melody Van – Offline Player</title>
+  <link rel="icon" type="image/png" href="icon.jpg">
   <style>
     body {
-      background-color: #fbd4c6;
+      background-color: #f98866;
       font-family: Arial, sans-serif;
       text-align: center;
+      margin: 0;
     }
     h1 {
       color: #b30059;
-      margin-top: 2rem;
+      margin: 1rem 0;
+    }
+    img.poster {
+      width: 100%;
+      max-width: 500px;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+      border-radius: 10px;
     }
     .song {
       background: #fff;
@@ -21,79 +31,52 @@
       padding: 1rem;
       width: 90%;
       max-width: 400px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
     .song p {
       margin: 0.5rem 0;
       font-weight: bold;
     }
-    img {
-      width: 100%;
-      max-width: 600px;
-      border-radius: 10px;
-      margin-top: 1rem;
+    .download-share {
+      margin-top: 0.5rem;
+    }
+    .download-share a {
+      margin: 0 10px;
+      text-decoration: none;
+      color: #b30059;
+      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
+  <img src="poster.jpg" alt="Lost Melody Van" class="poster">
   <h1>🎵 Lost Melody Van – Offline Player 🎶</h1>
-
-  <img src="poster.jpg" alt="Poster" />
 
   <div class="song">
     <p>Soy Libre.</p>
     <audio controls src="Soy Libre. (1).mp3"></audio>
+    <div class="download-share">
+      <a href="Soy Libre. (1).mp3" download>Letöltés</a> |
+      <a href="https://t.me/share/url?url=https://lost-melody-van.vercel.app/Soy%20Libre.%20(1).mp3" target="_blank">Megosztás</a>
+    </div>
   </div>
 
   <div class="song">
     <p>Soy libre pepperappabumm!</p>
     <audio controls src="Soy libre pepperappabumm! (1).mp3"></audio>
+    <div class="download-share">
+      <a href="Soy libre pepperappabumm! (1).mp3" download>Letöltés</a> |
+      <a href="https://t.me/share/url?url=https://lost-melody-van.vercel.app/Soy%20libre%20pepperappabumm!%20(1).mp3" target="_blank">Megosztás</a>
+    </div>
   </div>
 
   <div class="song">
     <p>Nem veszem be!</p>
     <audio controls src="Nem veszem be! (1).mp3"></audio>
+    <div class="download-share">
+      <a href="Nem veszem be! (1).mp3" download>Letöltés</a> |
+      <a href="https://t.me/share/url?url=https://lost-melody-van.vercel.app/Nem%20veszem%20be!%20(1).mp3" target="_blank">Megosztás</a>
+    </div>
   </div>
-
-  <div class="song">
-    <p>Csak nosztalgia.</p>
-    <audio controls src="Csak nosztalgia. (1).mp3"></audio>
-  </div>
-
-  <div class="song">
-    <p>Nosztalgia.</p>
-    <audio controls src="Nosztalgia. (1).mp3"></audio>
-  </div>
-
-  <div class="song">
-    <p>Baila Baby!</p>
-    <audio controls src="Baila Baby! (1).mp3"></audio>
-  </div>
-
-  <div class="song">
-    <p>Őrült nyár!</p>
-    <audio controls src="Őrült nyár! (1).mp3"></audio>
-  </div>
-
-  <div class="song">
-    <p>Ááhe!</p>
-    <audio controls src="Ááhe! (1).mp3"></audio>
-  </div>
-
-  <div class="song">
-    <p>Csókolózni egyedül.</p>
-    <audio controls src="Csókolózni egyedül. (1).mp3"></audio>
-  </div>
-
-  <div class="song">
-    <p>Fortuna kisasszony.</p>
-    <audio controls src="Fortuna kisasszony. (1).mp3"></audio>
-  </div>
-
-  <div class="song">
-    <p>Szerencse kisasszony.</p>
-    <audio controls src="Szerencse kisasszony. (1).mp3"></audio>
-  </div>
-
 </body>
 </html>
