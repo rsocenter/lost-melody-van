@@ -1,0 +1,195 @@
+
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lost Melody Van – Offline Player</title>
+  <link rel="icon" href="poster.jpg" type="image/jpeg" />
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    body {
+      background-color: #602b72;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      color: #ff55aa;
+      margin-top: 1rem;
+    }
+    .poster {
+      width: 100%;
+      max-width: 600px;
+      display: block;
+      margin: auto;
+    }
+    .song {
+      background: #fff;
+      border-radius: 10px;
+      margin: 1rem auto;
+      padding: 1rem;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    .song.playing {
+      border: 2px solid #ff55aa;
+      animation: pulse 1s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 5px #ff55aa; }
+      50% { box-shadow: 0 0 20px #ff55aa; }
+      100% { box-shadow: 0 0 5px #ff55aa; }
+    }
+    .buttons {
+      margin-top: 0.5rem;
+    }
+    .buttons a {
+      text-decoration: none;
+      margin: 0 10px;
+      color: #b30059;
+      font-weight: bold;
+    }
+    .controls {
+      margin: 1rem;
+    }
+    .controls button {
+      background: #ff55aa;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      margin: 0 0.5rem;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <img src="poster.jpg" alt="Lost Melody Van" class="poster"/>
+  <h1>🎵 Lost Melody Van – Offline Player 🎵</h1>
+
+  <div class="controls">
+    <button onclick="playInOrder()">▶ Sorban</button>
+    <button onclick="playRandom()">🔀 Véletlenszerű</button>
+  </div>
+
+  <div id="playlist">
+    <!-- Hely a lejátszási listának -->
+  </div>
+
+  <script>
+    const songs = [
+      "Soy Libre. (1).mp3",
+      "Soy libre pepperappabumm! (1).mp3",
+      "Nem veszem be! (1).mp3",
+      "Baila Baby! (1).mp3",
+      "Csak nosztalgia. (1).mp3",
+      "Csókolózni egyedül. (1).mp3",
+      "Fortuna kisasszony. (1).mp3",
+      "Nosztalgia. (1).mp3",
+      "Szerencse kisasszony. (1).mp3",
+      "Ááhe! (1).mp3",
+      "Őrült nyár! (1).mp3"
+    ];
+
+    let currentAudio = null;
+
+    function createPlayer(filename) {
+      const div = document.createElement('div');
+      div.className = "song";
+
+      const title = document.createElement('p');
+      title.innerHTML = "<strong>" + filename.replace(" (1).mp3", "") + "</strong>";
+      div.appendChild(title);
+
+      const audio = document.createElement('audio');
+      audio.controls = true;
+      audio.src = filename;
+      audio.addEventListener('play', () => {
+        if (currentAudio && currentAudio !== audio) {
+          currentAudio.pause();
+        }
+        currentAudio = audio;
+        document.querySelectorAll('.song').forEach(el => el.classList.remove('playing'));
+        div.classList.add('playing');
+      });
+      audio.addEventListener('pause', () => {
+        div.classList.remove('playing');
+      });
+      div.appendChild(audio);
+
+      const btns = document.createElement('div');
+      btns.className = "buttons";
+      btns.innerHTML = `
+        <a href="${filename}" download>Letöltés</a> |
+        <a href="#" onclick="share('${filename}'); return false;">Megosztás</a>
+      `;
+      div.appendChild(btns);
+
+      return div;
+    }
+
+    function populatePlaylist() {
+      const list = document.getElementById('playlist');
+      list.innerHTML = "";
+      songs.forEach(song => {
+        list.appendChild(createPlayer(song));
+      });
+    }
+
+    function playInOrder() {
+      populatePlaylist();
+      let audios = document.querySelectorAll('audio');
+      let i = 0;
+      function playNext() {
+        if (i < audios.length) {
+          audios[i].play();
+          audios[i].onended = () => {
+            i++;
+            playNext();
+          };
+        }
+      }
+      playNext();
+    }
+
+    function playRandom() {
+      const shuffled = [...songs].sort(() => 0.5 - Math.random());
+      const list = document.getElementById('playlist');
+      list.innerHTML = "";
+      shuffled.forEach(song => {
+        list.appendChild(createPlayer(song));
+      });
+      let audios = document.querySelectorAll('audio');
+      let i = 0;
+      function playNext() {
+        if (i < audios.length) {
+          audios[i].play();
+          audios[i].onended = () => {
+            i++;
+            playNext();
+          };
+        }
+      }
+      playNext();
+    }
+
+    function share(file) {
+      if (navigator.share) {
+        navigator.share({
+          title: 'Lost Melody Van',
+          text: 'Hallgasd meg ezt a dalt!',
+          url: file
+        });
+      } else {
+        alert("A megosztás itt nem támogatott.");
+      }
+    }
+
+    populatePlaylist();
+  </script>
+</body>
+</html>
