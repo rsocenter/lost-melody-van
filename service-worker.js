@@ -1,5 +1,5 @@
 
-const CACHE_NAME = 'lost-melody-cache-v4';
+const CACHE_NAME = 'lost-melody-cache-v2';
 const urlsToCache = [
   '/',
   '/index.html',
