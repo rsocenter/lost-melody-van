@@ -1,0 +1,197 @@
+
+<!DOCTYPE html>
+
+<html lang="hu">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lost Melody Van 🎵</title>
+<link href="/manifest.json" rel="manifest"/>
+<meta content="#000000" name="theme-color"/>
+<style>
+    body { background-color: #000; color: #fff; font-family: sans-serif; text-align: center; margin: 0; padding: 0; }
+    img.poster { max-width: 100%; max-height: 40vh; margin-top: 10px; object-fit: contain; }
+    .controls, .song-buttons {
+      margin: 10px auto;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .controls button, .email-btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid white;
+      background-color: transparent;
+      color: white;
+      cursor: pointer;
+    }
+    .controls button.active { background-color: #f0c; color: black; }
+    .song-buttons button {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: none;
+      background-color: #444;
+      color: white;
+    }
+    .song-buttons button.active { background-color: #f0c; color: black; }
+    #current-song { font-weight: bold; margin: 10px 0; }
+    audio { margin: 10px auto; width: 80%; display: block; }
+  </style>
+</head>
+<body>
+<img alt="Poszter" class="poster" src="poster.jpg"/>
+<h1>Lost Melody Van 🎶</h1>
+<div class="controls"><button class="active" id="sequential">▶️ Sorban</button><button id="shuffle">🔀 Véletlen</button><button id="installApp">📲 App telepítése</button></div>
+<div class="song-buttons" id="song-list">
+<button onclick="playSong(0)">1. Soy libre</button>
+<button onclick="playSong(1)">2. Soy libre pepperapabum</button>
+<button onclick="playSong(2)">3. Nem veszem be</button>
+<button onclick="playSong(3)">4. Csak nosztalgia</button>
+<button onclick="playSong(4)">5. Nosztalgia</button>
+<button onclick="playSong(5)">6. Baila baby</button>
+<button onclick="playSong(6)">7. Őrült nyár</button>
+<button onclick="playSong(7)">8. Ááhe</button>
+<button onclick="playSong(8)">9. Fortuna kisasszony</button>
+<button onclick="playSong(9)">10. Szerencse kisasszony</button>
+<button onclick="playSong(10)">11. Csókolózni egyedül</button>
+</div>
+<div id="current-song">🎵 Jelenleg nincs lejátszott dal</div>
+<audio controls="" id="player"></audio>
+<div class="controls"><button onclick="shareApp()">📤 App megosztása</button><a class="email-btn" href="mailto:kovacsisa05@gmail.com?subject=Lost Melody Van kapcsolat">📧 Írj nekünk</a></div>
+<script>
+    const songs = [
+      "Soy Libre. (1).mp3",
+      "Soy libre pepperapabum.mp3",
+      "Nem veszem be! (1).mp3",
+      "Csak nosztalgia. (1).mp3",
+      "Nosztalgia. (1).mp3",
+      "Baila Baby! (1).mp3",
+      "Őrült nyár! (1).mp3",
+      "Ááhe! (1).mp3",
+      "Fortuna kisasszony. (1).mp3",
+      "Szerencse kisasszony. (1).mp3",
+      "Csókolózni egyedül. (1).mp3"
+    ];
+
+    const player = document.getElementById("player");
+    const songButtons = document.querySelectorAll("#song-list button");
+    const currentText = document.getElementById("current-song");
+
+    let currentIndex = 0;
+    let mode = "sequential";
+
+    function playSong(index) {
+      currentIndex = index;
+      player.src = songs[index];
+      player.play();
+      highlightPlaying(index);
+      currentText.textContent = "🎵 Most szól: " + songs[index].replace('. (1).mp3', '').replace('.mp3', '');
+    }
+
+    function highlightPlaying(index) {
+      songButtons.forEach(btn => btn.classList.remove("active"));
+      songButtons[index].classList.add("active");
+    }
+
+    document.getElementById("sequential").onclick = () => {
+      mode = "sequential";
+      setActiveMode("sequential");
+    };
+
+    document.getElementById("shuffle").onclick = () => {
+      mode = "shuffle";
+      setActiveMode("shuffle");
+    };
+
+    function setActiveMode(id) {
+      document.getElementById("sequential").classList.remove("active");
+      document.getElementById("shuffle").classList.remove("active");
+      document.getElementById(id).classList.add("active");
+    }
+
+    player.addEventListener("ended", () => {
+      if (mode === "shuffle") {
+        playSong(Math.floor(Math.random() * songs.length));
+      } else {
+        currentIndex = (currentIndex + 1) % songs.length;
+        playSong(currentIndex);
+      }
+    });
+
+    function downloadCurrent() {
+      const a = document.createElement("a");
+      a.href = player.src;
+      a.download = songs[currentIndex];
+      a.click();
+    }
+
+    function shareCurrent() {
+      if (navigator.share) {
+        navigator.share({
+          title: "Lost Melody Van – " + songs[currentIndex],
+          text: "Hallgasd meg ezt a dalt!",
+          url: window.location.href + "?song=" + encodeURIComponent(songs[currentIndex])
+        }).catch((err) => console.log("Megosztás megszakítva", err));
+      } else {
+        alert("A böngésződ nem támogatja a megosztást.");
+      }
+    }
+
+    function shareApp() {
+      if (navigator.share) {
+        navigator.share({
+          title: "Lost Melody Van",
+          text: "Hallgasd meg a zenéinket!",
+          url: window.location.href
+        }).catch(err => console.log("Megosztás megszakítva", err));
+      } else {
+        alert("A böngésződ nem támogatja az app megosztást.");
+      }
+    }
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js').then(() => {
+        console.log("✅ Service Worker regisztrálva");
+      });
+    }
+
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+    });
+  
+let deferredPrompt;
+const installBtn = document.getElementById("installApp");
+installBtn.style.display = "inline-block";
+
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.style.display = "inline-block";
+});
+
+installBtn.addEventListener("click", () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+  }
+});
+</script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('/service-worker.js').then(
+        function (registration) {
+          console.log('ServiceWorker regisztrálva: ', registration.scope);
+        },
+        function (err) {
+          console.log('ServiceWorker hiba: ', err);
+        }
+      );
+    });
+  }
+</script>
+
+</body>
+</html>
