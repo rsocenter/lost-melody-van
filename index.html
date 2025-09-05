@@ -42,13 +42,11 @@
 <body>
   <img alt="Poszter" class="poster" src="poster.jpg"/>
   <h1>Lost Melody Van 🎶</h1>
-
   <div class="controls">
     <button class="active" id="sequential">▶️ Sorban</button>
     <button id="shuffle">🔀 Véletlen</button>
     <button id="installApp">📲 App telepítése</button>
   </div>
-
   <div class="song-buttons" id="song-list">
     <button onclick="playSong(0)">1. Soy libre</button>
     <button onclick="playSong(1)">2. Soy libre pepperapabum</button>
@@ -63,15 +61,12 @@
     <button onclick="playSong(10)">11. Csókolózni egyedül</button>
     <button onclick="playSong(11)">12. Rabotaty</button>
   </div>
-
   <div id="current-song">🎵 Jelenleg nincs lejátszott dal</div>
-  <audio controls="" id="player"></audio>
-
+  <audio controls id="player"></audio>
   <div class="controls">
     <button onclick="shareApp()">📤 App megosztása</button>
     <a class="email-btn" href="mailto:kovacsisa05@gmail.com?subject=Lost Melody Van kapcsolat">📧 Írj nekünk</a>
   </div>
-
   <script>
     const songs = [
       "Soy Libre. (1).mp3",
@@ -87,7 +82,6 @@
       "Csókolózni egyedül. (1).mp3",
       "Rabotaty. (1).mp3"
     ];
-
     const player = document.getElementById("player");
     const songButtons = document.querySelectorAll("#song-list button");
     const currentText = document.getElementById("current-song");
@@ -105,9 +99,62 @@
     function highlightPlaying(index) {
       songButtons.forEach(btn => btn.classList.remove("active"));
       songButtons[index].classList.add("active");
-    }
-
-    document.getElementById("sequential").onclick = () => {
+    }document.getElementById("sequential").onclick = () => {
       mode = "sequential";
       setActiveMode("sequential");
     };
+    document.getElementById("shuffle").onclick = () => {
+      mode = "shuffle";
+      setActiveMode("shuffle");
+    };
+
+    function setActiveMode(id) {
+      document.getElementById("sequential").classList.remove("active");
+      document.getElementById("shuffle").classList.remove("active");
+      document.getElementById(id).classList.add("active");
+    }
+
+    player.addEventListener("ended", () => {
+      if (mode === "shuffle") {
+        playSong(Math.floor(Math.random() * songs.length));
+      } else {
+        currentIndex = (currentIndex + 1) % songs.length;
+        playSong(currentIndex);
+      }
+    });
+
+    function shareApp() {
+      if (navigator.share) {
+        navigator.share({
+          title: "Lost Melody Van",
+          text: "Hallgasd meg a zenéinket!",
+          url: window.location.href
+        }).catch(err => console.log("Megosztás megszakítva", err));
+      } else {
+        alert("A böngésződ nem támogatja az app megosztást.");
+      }
+    }
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js').then(() => {
+        console.log("✅ Service Worker regisztrálva");
+      });
+    }
+
+    let deferredPrompt;
+    const installBtn = document.getElementById("installApp");
+
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = "inline-block";
+    });
+
+    installBtn.addEventListener("click", () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+      }
+    });
+  </script>
+</body>
+</html>
