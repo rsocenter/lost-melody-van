@@ -2,12 +2,12 @@
 <html lang="hu">
 <head>
   <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Lost Melody Van 🎵</title>
-  <link href="/manifest.json" rel="manifest"/>
+  <link rel="manifest" href="/manifest.json"/>
   <link rel="icon" href="/icon-192x192-v2.png" type="image/png" />
   <link rel="apple-touch-icon" href="/icon-512x512-v2.png" />
-  <meta content="#000000" name="theme-color"/>
+  <meta name="theme-color" content="#000000"/>
   <style>
     body { background-color: #000; color: #fff; font-family: sans-serif; text-align: center; margin: 0; padding: 0; }
     img.poster { max-width: 100%; max-height: 40vh; margin-top: 10px; object-fit: contain; }
@@ -40,10 +40,10 @@
   </style>
 </head>
 <body>
-  <img alt="Poszter" class="poster" src="poster.jpg"/>
+  <img class="poster" src="poster.jpg" alt="Poszter"/>
   <h1>Lost Melody Van 🎶</h1>
   <div class="controls">
-    <button class="active" id="sequential">▶️ Sorban</button>
+    <button id="sequential" class="active">▶️ Sorban</button>
     <button id="shuffle">🔀 Véletlen</button>
     <button id="installApp">📲 App telepítése</button>
   </div>
@@ -62,7 +62,7 @@
     <button onclick="playSong(11)">12. Rabotaty</button>
   </div>
   <div id="current-song">🎵 Jelenleg nincs lejátszott dal</div>
-  <audio controls id="player"></audio>
+  <audio id="player" controls></audio>
   <div class="controls">
     <button onclick="shareApp()">📤 App megosztása</button>
     <a class="email-btn" href="mailto:kovacsisa05@gmail.com?subject=Lost Melody Van kapcsolat">📧 Írj nekünk</a>
@@ -99,7 +99,9 @@
     function highlightPlaying(index) {
       songButtons.forEach(btn => btn.classList.remove("active"));
       songButtons[index].classList.add("active");
-    }document.getElementById("sequential").onclick = () => {
+    }
+
+    document.getElementById("sequential").onclick = () => {
       mode = "sequential";
       setActiveMode("sequential");
     };
@@ -143,7 +145,6 @@
 
     let deferredPrompt;
     const installBtn = document.getElementById("installApp");
-
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
       deferredPrompt = e;
