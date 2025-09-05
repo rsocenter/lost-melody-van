@@ -2,15 +2,27 @@
 <html lang="hu">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <title>Lost Melody Van 🎵</title>
-  <link rel="manifest" href="/manifest.json"/>
+  <link href="/manifest.json" rel="manifest"/>
   <link rel="icon" href="/icon-192x192-v2.png" type="image/png" />
   <link rel="apple-touch-icon" href="/icon-512x512-v2.png" />
-  <meta name="theme-color" content="#000000"/>
+  <meta content="#000000" name="theme-color"/>
   <style>
-    body { background-color: #000; color: #fff; font-family: sans-serif; text-align: center; margin: 0; padding: 0; }
-    img.poster { max-width: 100%; max-height: 40vh; margin-top: 10px; object-fit: contain; }
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    img.poster {
+      max-width: 100%;
+      max-height: 40vh;
+      margin-top: 10px;
+      object-fit: contain;
+    }
     .controls, .song-buttons {
       margin: 10px auto;
       display: flex;
@@ -26,7 +38,10 @@
       color: white;
       cursor: pointer;
     }
-    .controls button.active { background-color: #f0c; color: black; }
+    .controls button.active {
+      background-color: #f0c;
+      color: black;
+    }
     .song-buttons button {
       padding: 6px 12px;
       border-radius: 6px;
@@ -34,19 +49,31 @@
       background-color: #444;
       color: white;
     }
-    .song-buttons button.active { background-color: #f0c; color: black; }
-    #current-song { font-weight: bold; margin: 10px 0; }
-    audio { margin: 10px auto; width: 80%; display: block; }
+    .song-buttons button.active {
+      background-color: #f0c;
+      color: black;
+    }
+    #current-song {
+      font-weight: bold;
+      margin: 10px 0;
+    }
+    audio {
+      margin: 10px auto;
+      width: 80%;
+      display: block;
+    }
   </style>
 </head>
 <body>
-  <img class="poster" src="poster.jpg" alt="Poszter"/>
+  <img alt="Poszter" class="poster" src="poster.jpg"/>
   <h1>Lost Melody Van 🎶</h1>
+
   <div class="controls">
-    <button id="sequential" class="active">▶️ Sorban</button>
+    <button class="active" id="sequential">▶️ Sorban</button>
     <button id="shuffle">🔀 Véletlen</button>
     <button id="installApp">📲 App telepítése</button>
   </div>
+
   <div class="song-buttons" id="song-list">
     <button onclick="playSong(0)">1. Soy libre</button>
     <button onclick="playSong(1)">2. Soy libre pepperapabum</button>
@@ -61,12 +88,15 @@
     <button onclick="playSong(10)">11. Csókolózni egyedül</button>
     <button onclick="playSong(11)">12. Rabotaty</button>
   </div>
+
   <div id="current-song">🎵 Jelenleg nincs lejátszott dal</div>
-  <audio id="player" controls></audio>
+  <audio controls="" id="player"></audio>
+
   <div class="controls">
     <button onclick="shareApp()">📤 App megosztása</button>
     <a class="email-btn" href="mailto:kovacsisa05@gmail.com?subject=Lost Melody Van kapcsolat">📧 Írj nekünk</a>
   </div>
+
   <script>
     const songs = [
       "Soy Libre. (1).mp3",
@@ -82,6 +112,7 @@
       "Csókolózni egyedül. (1).mp3",
       "Rabotaty. (1).mp3"
     ];
+
     const player = document.getElementById("player");
     const songButtons = document.querySelectorAll("#song-list button");
     const currentText = document.getElementById("current-song");
@@ -99,9 +130,7 @@
     function highlightPlaying(index) {
       songButtons.forEach(btn => btn.classList.remove("active"));
       songButtons[index].classList.add("active");
-    }
-
-    document.getElementById("sequential").onclick = () => {
+    }document.getElementById("sequential").onclick = () => {
       mode = "sequential";
       setActiveMode("sequential");
     };
